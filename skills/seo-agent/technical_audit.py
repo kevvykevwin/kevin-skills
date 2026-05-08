@@ -20,7 +20,7 @@ import argparse
 import json
 import re
 import sys
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urlparse
 from datetime import datetime
 
 # For actual implementation, these would use requests/httpx
@@ -128,7 +128,7 @@ def detect_schema(html_content: str) -> dict:
             elif isinstance(data, dict) and '@type' in data:
                 schema_types.append(data['@type'])
 
-        except (json.JSONDecodeError, ValueError) as e:
+        except (json.JSONDecodeError, ValueError):
             parse_errors += 1
             continue
 

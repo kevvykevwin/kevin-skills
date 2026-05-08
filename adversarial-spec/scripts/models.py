@@ -6,7 +6,6 @@ import sys
 import json
 import time
 import subprocess
-import shutil
 from pathlib import Path
 from dataclasses import dataclass, field
 from typing import Optional

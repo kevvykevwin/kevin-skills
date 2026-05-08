@@ -30,11 +30,13 @@ from session import SessionState, save_checkpoint
 
 # Try to import telegram support
 try:
-    from telegram_bot import is_configured as telegram_configured, send_message, notify_and_wait
+    from telegram_bot import is_configured as telegram_configured, notify_and_wait
     TELEGRAM_AVAILABLE = True
 except ImportError:
     TELEGRAM_AVAILABLE = False
-    telegram_configured = lambda: False
+
+    def telegram_configured():
+        return False
 
 
 def print_response_summary(responses, round_num: int):
@@ -101,7 +103,7 @@ def run_debate(args):
     if args.context:
         context_files = [c.strip() for c in args.context.split(',')]
 
-    print(f"Starting adversarial spec debate")
+    print("Starting adversarial spec debate")
     print(f"  Document type: {get_doc_type_name(args.doc_type)}")
     print(f"  Models: {', '.join(models)}")
     if args.focus:
@@ -109,7 +111,7 @@ def run_debate(args):
     if args.persona:
         print(f"  Persona: {args.persona}")
     if args.preserve_intent:
-        print(f"  Preserve intent: enabled")
+        print("  Preserve intent: enabled")
     print()
 
     current_spec = spec
@@ -345,7 +347,7 @@ Examples:
     # Critique command
     critique_parser = subparsers.add_parser("critique", help="Run critique debate")
     critique_parser.add_argument("--models", "-m", help="Comma-separated list of models")
-    critique_parser.add_argument("--doc-type", "-t", choices=["prd", "tech"], default="tech", help="Document type")
+    critique_parser.add_argument("--doc-type", "-t", choices=["prd", "tech"], help="Document type")
     critique_parser.add_argument("--focus", "-f", help="Focus area (security, scalability, performance, ux, reliability, cost)")
     critique_parser.add_argument("--persona", "-p", help="Reviewer persona")
     critique_parser.add_argument("--context", "-c", help="Comma-separated context files")
@@ -447,6 +449,8 @@ Examples:
             args.focus = args.focus or profile.get("focus")
             args.persona = args.persona or profile.get("persona")
             args.preserve_intent = args.preserve_intent or profile.get("preserve_intent", False)
+        else:
+            args.doc_type = args.doc_type or "tech"
 
         # Validate required args
         if not args.models:
