@@ -341,8 +341,10 @@ def build_report(data: dict) -> str:
 
 """
     
-    presence = data.get('presence_details', {})
+    presence = data.get('presence_details') or {}
     for platform, details in presence.items():
+        if not isinstance(details, dict):
+            details = {}
         status = '✅' if details.get('present') else '❌'
         report += f"- **{platform}:** {status} "
         if details.get('notes'):
